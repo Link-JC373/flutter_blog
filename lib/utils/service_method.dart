@@ -1,9 +1,11 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter_shop/routers/application.dart';
 import 'package:flutter_shop/utils/httpHeaders.dart';
+import 'package:flutter_shop/utils/provider_modal.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
 import 'dart:io';
@@ -29,17 +31,24 @@ class DioUtil {
         response = await dio.post(servicePath[url]);
       } else {
         response = await dio.post(servicePath[url], data: formData);
-        print(response);
       }
 
       if (response.statusCode == 200) {
         var responseData = json.decode(response.data);
-        print(responseData);
+        // print(responseData['status'].toString() == '401');
 
         //判断是否有权限，
-        if (responseData['status'] == 401) {
-          print(123);
+        if (responseData['status'].toString() == '401') {
+          print('!!!!!!!!!!!!!!!!!!!!!!');
+          print(responseData['status']);
+
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          prefs.clear();
+
+          //在这里跳转，点赞功能会出问题：总是跳转。改成更改登录状态
           Application.router.navigateTo(context, '/login');
+
+          // Provider.of<IsLoginModal>(context).changeLoginState(false);
           loading = false;
 
           return null;
@@ -59,20 +68,22 @@ class DioUtil {
 
   static tokenInter() {
     dio.interceptors.add(
-      InterceptorsWrapper(
-        onRequest: (RequestOptions options) {
-          dio.lock();
-          Future<dynamic> future = Future(() async {
-            print("请求拦截开始");
-            SharedPreferences prefs = await SharedPreferences.getInstance();
-            return prefs.getString('token');
-          });
-          return future.then((value) {
-            options.headers["token"] = value;
-            return options;
-          }).whenComplete(() => dio.unlock());
-        },
-      ),
+      InterceptorsWrapper(onRequest: (RequestOptions options) {
+        dio.lock();
+        Future<dynamic> future = Future(() async {
+          print("请求拦截开始");
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          return prefs.getString('token');
+        });
+        return future.then((value) {
+          options.headers["token"] = value;
+          return options;
+        }).whenComplete(() => dio.unlock());
+      }, onResponse: (Response response) {
+        // 在返回响应数据之前做一些预处理
+
+        return response; // continue
+      }),
     );
   }
 }

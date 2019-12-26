@@ -6,9 +6,11 @@ import '../pages/addArticle_fluro.dart';
 
 Handler detailsHandler = Handler(
     handlerFunc: (BuildContext context, Map<String, List<String>> params) {
-  String articleId = params['id'].first;
+  String articleId = params['id']?.first;
+  print(params['id']);
+  int userId = int.parse(params['userId']?.first);
   print('index>details goodsID is $articleId');
-  return DetailsPage(articleId);
+  return DetailsPage(articleId, userId);
 });
 
 Handler addArticleHandler = Handler(

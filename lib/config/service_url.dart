@@ -12,4 +12,6 @@ const servicePath = {
   'getArticleType': serviceUrl + 'default/getArticleType',
   'login': serviceUrl + 'user/checkLogin',
   'comment': serviceUrl + 'user/comment',
+  'addArticlePoint': serviceUrl + 'user/addArticlePoint',
+  'reduceArticlePoint': serviceUrl + 'user/reduceArticlePoint',
 };

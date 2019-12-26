@@ -270,8 +270,13 @@ class _SignInPageState extends State<SignInPage> {
             SharedPreferences prefs = await SharedPreferences.getInstance();
 
             prefs.setString('token', data['token']);
+            prefs.setInt('userId', data['userId']);
 
             Provider.of<IsLoginModal>(context).changeLoginState(true);
+            Provider.of<IsLoginModal>(context)
+                .changeUserId(data['data']['userId']);
+            Provider.of<IsLoginModal>(context)
+                .changeUserName(data['data']['userName']);
 
             Navigator.of(context).pop();
           } else {

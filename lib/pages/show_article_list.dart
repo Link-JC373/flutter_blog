@@ -3,7 +3,9 @@ import 'dart:convert';
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
+import 'package:flutter_shop/utils/provider_modal.dart';
 import 'package:flutter_shop/utils/service_method.dart';
+import 'package:provider/provider.dart';
 import '../routers/application.dart';
 
 int pageSize = 10;
@@ -131,6 +133,7 @@ class ArticleList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final providerModal = Provider.of<IsLoginModal>(context);
     if (articleList.length != 0) {
       print(index);
       //Card本身似乎没有点击事件，使用 InkWell 包裹使其能够触发点击事件
@@ -138,7 +141,7 @@ class ArticleList extends StatelessWidget {
         onTap: () {
           Application.router.navigateTo(
             context,
-            '/detail?id=${articleList[index]['id']}',
+            '/detail?id=${articleList[index]['id']}&userId=${providerModal.userId}',
             transition: TransitionType.fadeIn,
           );
         },
